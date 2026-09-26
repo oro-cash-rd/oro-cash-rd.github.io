@@ -125,5 +125,5 @@ body{font-size:15px}
 .sale-type:hover{border-color:#b8860b;background:#fcf5df;box-shadow:0 3px 12px rgba(184,134,11,.13)}
 .awaiting-choice .sale-type{animation:invite-choice 3.6s ease-in-out infinite}
 .awaiting-choice .sale-type:nth-child(2){animation-delay:1.8s}
-@keyframes invite-choice{0%,45%,100%{box-shadow:0 0 0 0 rgba(184,134,11,0);border-color:#ddd8cc}18%,28%{box-shadow:0 0 0 3px rgba(184,134,11,.15);border-color:#b8860b}}
+@keyframes invite-choice{0%,48%,100%{box-shadow:0 0 0 0 rgba(184,134,11,0);border-color:#ddd8cc;background:#faf9f6}18%,30%{box-shadow:0 0 0 4px rgba(212,175,55,.42),0 4px 20px rgba(184,134,11,.30);border-color:#a97800;background:#f6dda0}}
 @media(prefers-reduced-motion:reduce){.awaiting-choice .sale-type{animation:none;border-color:#b8860b}.sale-type{transition:none}}
