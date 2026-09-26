@@ -86,6 +86,5 @@
     }
   })
   $('resetQuote').addEventListener('click', () => { state.quote = null; $('quoteResult').classList.add('hidden'); $('quoteForm').classList.remove('hidden'); sync() })
-  $('whatsappFloat').href = wa('Hola, ORO CASH RD. Quiero información para vender mi oro.')
   sync()
 })()
