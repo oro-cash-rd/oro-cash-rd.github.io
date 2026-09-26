@@ -54,3 +54,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .footer{padding-bottom:88px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+
+/* Two distinct selling paths, with direct WhatsApp handoff. */
+.hero{min-height:0;padding:116px 0 52px}.hero h1{font-size:clamp(40px,8vw,72px)}.hero-copy{margin-top:20px}.proof{margin-top:28px}
+.sale-types{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sale-type{font:inherit;min-width:0;min-height:104px;text-align:left;padding:16px 12px;background:#faf9f6;border:1px solid #ddd8cc;border-radius:14px;cursor:pointer}.sale-type strong{display:block;font-size:15px;line-height:1.35}.sale-type span{display:block;font-size:12px;line-height:1.5;color:var(--muted);margin-top:7px}.sale-type.active{border:2px solid #b8860b;padding:15px 11px;background:#fcf5df}.mode-hint{font-size:14px;line-height:1.6;color:#645b48;margin:22px 0}.field-label{font-weight:820}.field select{font:inherit;width:100%;min-width:0;min-height:52px;border:1px solid #e6e3dc;border-radius:12px;padding:12px;background:#f5f4f0;color:var(--ink)}.field small{display:block;color:var(--muted);font-size:12px;line-height:1.5;margin-top:8px}.field .check-label{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;margin:12px 0}.check-label input{width:20px;height:20px;accent-color:#b8860b}.weight-wrap:has(input:disabled){opacity:.5}.btn[aria-disabled="true"]{opacity:.44;cursor:not-allowed}.step-num{display:block;margin-bottom:18px}:focus-visible{outline:3px solid #b8860b;outline-offset:4px}#cotizador{scroll-margin-top:20px}
+@media(min-width:700px){.steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:699px){.hero{padding:104px 0 36px}.hero-copy{font-size:16px}.proof{gap:8px;margin-top:24px;padding-top:18px}.section{padding:36px 0}.section-intro p{margin-bottom:0}.sale-type strong{font-size:14px}.calculator{padding:18px 14px}.field-head small{margin-top:0}}

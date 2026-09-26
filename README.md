@@ -12,13 +12,11 @@ Frontend 100% estático para GitHub Pages.
 
 ## Flujo
 
-1. Cliente introduce peso y quilataje.
-2. Frontend envía exclusivamente `weight_grams` y `karat` a `/quote`.
-3. Backend obtiene datos de mercado, calcula el valor y aplica la configuración privada.
-4. El navegador recibe únicamente la cotización pública y su referencia.
-5. Al pulsar **ACEPTAR OFERTA ESTIMADA**, el cliente introduce su WhatsApp.
-6. `/negotiate` registra WhatsApp, IP, ubicación aproximada, user-agent y quote_id.
-7. El backend genera el enlace hacia el WhatsApp de ORO CASH RD con la cotización precargada.
+1. El cliente elige joya u oro para fundición.
+2. Joyas: declara tipo, peso aproximado (o desconocido) y quilataje (o desconocido). Abre WhatsApp con esos datos para valoración manual, sin cotización automática.
+3. Fundición: peso y quilataje conocido se envían a `/quote`. Se muestra una estimación explícita del metal; el quilataje desconocido deriva a WhatsApp.
+4. Los botones usan enlaces nativos `wa.me` al WhatsApp comercial con el mensaje preparado. El cliente revisa y envía el mensaje en WhatsApp.
+5. No se solicita teléfono, no se abre modal y no se llama a `/negotiate`. La función antigua permanece disponible para compatibilidad, pero este frontend no la usa.
 
 ## Seguridad
 

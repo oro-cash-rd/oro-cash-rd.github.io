@@ -1,161 +1,35 @@
 <!doctype html>
 <html lang="es-DO">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#0d0d0d" />
-  <meta name="description" content="Cotiza tu oro en República Dominicana con una estimación basada en el precio internacional, el peso y la pureza de tu pieza." />
-  <meta property="og:title" content="ORO CASH RD — Convierte tu oro en dinero" />
-  <meta property="og:description" content="Obtén una cotización estimada de tu oro y continúa la negociación por WhatsApp." />
-  <meta property="og:type" content="website" />
-  <meta property="og:locale" content="es_DO" />
-  <title>ORO CASH RD — Cotiza tu oro</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css?v=20260926-mobile" />
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0d0d"><title>ORO CASH RD — Convierte tu oro en dinero</title>
+<meta name="description" content="Vende tu oro en República Dominicana. Cotiza oro para fundición o presenta tu joya para negociar por WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css?v=20260926-joyas">
 </head>
 <body>
-  <nav class="nav">
-    <div class="container nav-inner">
-      <a class="brand" href="#"><span class="brand-mark">O</span><span>ORO CASH RD</span></a>
-      <a class="nav-pill" href="#cotizador">Cotizar ahora</a>
-    </div>
-  </nav>
-
-  <header class="hero">
-    <div class="container hero-content">
-      <div class="eyebrow light">Compra de oro · República Dominicana</div>
-      <h1>Convierte tu oro en dinero.</h1>
-      <p class="hero-copy">Obtén una cotización estimada basada en el precio internacional del oro, el peso y la pureza de tu pieza.</p>
-      <div class="hero-actions">
-        <a class="btn btn-gold" href="#cotizador">COTIZA TU ORO →</a>
-        <a class="btn btn-outline" href="#como-funciona">CÓMO FUNCIONA</a>
-      </div>
-      <div class="proof">
-        <span>Tasa del día · República Dominicana</span>
-        <span>Evaluación presencial</span>
-        <span>Pago rápido</span>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <section class="section" id="cotizador">
-      <div class="container calc-grid">
-        <div class="section-intro">
-          <div class="eyebrow dark">Cotización estimada</div>
-          <h2>¿Cuánto podríamos ofrecerte por tu oro?</h2>
-          <p>Introduce el peso aproximado y el quilataje. Verás la estimación antes de pedirte tu WhatsApp.</p>
-        </div>
-
-        <div class="calculator">
-          <div id="quoteForm">
-            <div class="field">
-              <label for="weight">Peso</label>
-              <div class="weight-wrap"><input id="weight" inputmode="decimal" placeholder="18.52" /><span>gramos</span></div>
-            </div>
-            <div class="field">
-              <div class="field-head"><label>Quilataje</label><small>Selecciona el sello de tu pieza</small></div>
-              <div class="karats">
-                <button class="karat" data-karat="10K">10K</button>
-                <button class="karat" data-karat="14K">14K</button>
-                <button class="karat" data-karat="18K">18K</button>
-                <button class="karat" data-karat="21K">21K</button>
-                <button class="karat" data-karat="22K">22K</button>
-                <button class="karat" data-karat="24K">24K</button>
-                <button class="karat unknown" data-karat="unknown">No sé</button>
-              </div>
-            </div>
-            <div id="unknownNotice" class="notice hidden"><strong>No te preocupes.</strong><br>Podemos verificar la pureza de tu pieza durante la evaluación.</div>
-            <div id="quoteError" class="error hidden"></div>
-            <button id="quoteButton" class="btn btn-dark full" disabled>CALCULAR COTIZACIÓN →</button>
-            <p class="fineprint">La cotización es orientativa y se confirma después de verificar presencialmente el peso y la pureza.</p>
-          </div>
-
-          <div id="quoteResult" class="result hidden" aria-live="polite">
-            <div class="result-kicker">Podríamos ofrecerte aproximadamente</div>
-            <div id="resultAmount" class="amount">RD$0</div>
-            <div id="resultMeta" class="quote-tag"></div>
-            <p class="result-copy">Esta es una cotización estimada basada en el precio internacional actual del oro. El valor final se confirma después de verificar presencialmente el peso y la pureza de la pieza.</p>
-            <div id="resultTime" class="result-time"></div>
-            <div id="staleWarning" class="warning hidden">La cotización utiliza el último dato de mercado válido disponible.</div>
-            <button id="acceptOffer" class="btn btn-gold full">ACEPTAR OFERTA ESTIMADA →</button>
-            <button id="resetQuote" class="btn btn-ghost full">COTIZAR OTRA PIEZA</button>
-            <p class="fineprint">Aceptar la oferta estimada inicia la negociación. La oferta final está sujeta a verificación presencial.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section white" id="como-funciona">
-      <div class="container">
-        <div class="section-heading" style="max-width:720px;margin:0 auto;text-align:center">
-          <div class="eyebrow dark">Cómo funciona</div>
-          <h2>Una cotización clara, sin complicaciones.</h2>
-          <p>Tomamos como referencia el mercado internacional y consideramos el peso y la pureza de tu pieza. La oferta definitiva se confirma después de una evaluación física.</p>
-        </div>
-        <div class="steps">
-          <article class="step"><div class="step-num">01</div><h3>Pesamos</h3><p>Verificamos el peso real de la pieza delante de ti.</p></article>
-          <article class="step"><div class="step-num">02</div><h3>Verificamos</h3><p>Comprobamos la pureza y el quilataje del oro.</p></article>
-          <article class="step"><div class="step-num">03</div><h3>Cotizamos</h3><p>Calculamos la oferta según las condiciones actuales del mercado.</p></article>
-          <article class="step"><div class="step-num">04</div><h3>Pagamos</h3><p>Si aceptas la oferta final, coordinamos el pago contigo.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section dark">
-      <div class="container trust-grid">
-        <div class="section-intro"><div class="eyebrow light">Confianza primero</div><h2>Vende tu oro con claridad.</h2><p>Queremos que conozcas nuestra oferta antes de decidir.</p></div>
-        <div class="trust-list">
-          <div class="trust-item">Tu pieza se pesa delante de ti.</div>
-          <div class="trust-item">Te explicamos el resultado de la evaluación.</div>
-          <div class="trust-item">Conoces nuestra oferta antes de decidir.</div>
-          <div class="trust-item">Sin obligación de vender.</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section white">
-      <div class="container faq-grid">
-        <div class="section-intro"><div class="eyebrow dark">Preguntas frecuentes</div><h2>Antes de vender tu oro.</h2><p>Respuestas directas a las dudas más comunes.</p></div>
-        <div class="faq">
-          <details><summary>¿Qué tipo de oro compran?<span>+</span></summary><p>Compramos cadenas, anillos, pulseras, aretes, piezas rotas y otras joyas de oro.</p></details>
-          <details><summary>¿Cómo sé cuántos quilates tiene mi pieza?<span>+</span></summary><p>Muchas piezas llevan un sello como 10K, 14K, 18K, 21K, 22K o 24K. Si no lo sabes, podemos verificarlo.</p></details>
-          <details><summary>¿Qué pasa si no conozco el peso?<span>+</span></summary><p>No hay problema. Durante la evaluación pesamos la pieza delante de ti.</p></details>
-          <details><summary>¿Compran joyas rotas?<span>+</span></summary><p>Sí. También evaluamos joyas rotas, incompletas o que ya no utilizas.</p></details>
-          <details><summary>¿Compran piezas con piedras?<span>+</span></summary><p>Sí. Durante la evaluación se determina el peso neto de oro.</p></details>
-          <details><summary>¿La cotización web es definitiva?<span>+</span></summary><p>No. La cotización web es orientativa. El precio final depende del peso y pureza verificados presencialmente.</p></details>
-          <details><summary>¿Cómo recibo el pago?<span>+</span></summary><p>Una vez confirmada la evaluación y aceptada la oferta final, coordinamos el pago directamente contigo.</p></details>
-          <details><summary>¿Dónde realizan la evaluación?<span>+</span></summary><p>La ubicación se coordina por WhatsApp después de iniciar la negociación.</p></details>
-        </div>
-      </div>
-    </section>
-
-    <section class="section white" style="padding-top:0">
-      <div class="container cta"><div><h2>¿Listo para saber cuánto vale tu oro?</h2><p>Obtén tu estimación en menos de un minuto.</p></div><a class="btn btn-dark" href="#cotizador">COTIZAR MI ORO →</a></div>
-    </section>
-  </main>
-
-  <footer class="footer"><div class="container footer-grid"><div><div class="brand"><span class="brand-mark">O</span><span>ORO CASH RD</span></div><p>Compra de oro usado en República Dominicana.</p></div><div><strong>Importante</strong><p>Las cotizaciones en línea son orientativas y no constituyen una oferta definitiva hasta verificar peso y pureza.</p></div></div><div class="container footer-bottom">© 2026 ORO CASH RD · <a href="https://metals.dev" target="_blank" rel="noreferrer">Datos de oro y cambio: Metals.Dev</a></div></footer>
-
-  <a id="whatsappFloat" class="wa-float" target="_blank" rel="noreferrer" aria-label="WhatsApp">WA</a>
-
-  <div id="modalBackdrop" class="modal-backdrop hidden">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button id="modalClose" class="modal-close" aria-label="Cerrar">×</button>
-      <div class="eyebrow dark">Último paso</div>
-      <h2 id="modalTitle">Continúa por WhatsApp.</h2>
-      <p class="modal-copy">Escribe tu número para asociarlo a esta cotización. Después abriremos directamente la conversación con ORO CASH RD.</p>
-      <div class="quote-mini"><span id="miniQuote"></span><strong id="miniAmount"></strong></div>
-      <div class="phone-field"><label for="clientWhatsapp">Tu WhatsApp</label><input id="clientWhatsapp" inputmode="tel" autocomplete="tel" placeholder="829 000 0000" /></div>
-      <div class="privacy"><span class="lock">🔒</span><span>Al continuar autorizas que asociemos este número a tu cotización y te contactemos para coordinar la evaluación. La ubicación obtenida por IP es aproximada.</span></div>
-      <div id="negotiationError" class="error hidden"></div>
-      <button id="continueButton" class="btn btn-gold full" disabled>CONTINUAR POR WHATSAPP →</button>
-    </div>
-  </div>
-
-  <script src="./config.js"></script>
-  <script src="./app.js"></script>
-</body>
-</html>
+<header class="nav"><div class="container nav-inner"><a class="brand" href="#"><span class="brand-mark">O</span> ORO CASH RD</a><a class="nav-pill" href="#cotizador">Vender mi oro</a></div></header>
+<section class="hero"><div class="container hero-content"><div class="eyebrow light">Compra de oro · República Dominicana</div><h1>Convierte tu oro<br>en dinero.</h1><p class="hero-copy">¿Una joya o material para fundición? Cuéntanos qué tienes.</p><div class="hero-actions"><a class="btn btn-gold" href="#cotizador">EMPEZAR →</a></div><div class="proof"><span>Evaluación presencial</span><span>Sin compromiso</span><span>Pago rápido</span></div></div></section>
+<main>
+<section class="section" id="cotizador"><div class="container calc-grid"><div class="section-intro"><div class="eyebrow dark">Elige cómo vender</div><h2>¿Qué quieres vender?</h2><p>El valor del metal y la valoración de una joya son diferentes.</p></div><div class="calculator">
+<div class="sale-types" role="group" aria-label="Qué quieres vender"><button class="sale-type" data-kind="jewelry" aria-pressed="false"><strong>Una joya</strong><span>Cadena, anillo, manilla…</span></button><button class="sale-type" data-kind="scrap" aria-pressed="false"><strong>Oro para fundición</strong><span>Chatarra o material por peso</span></button></div>
+<div id="detailsPanel" class="hidden">
+<p id="modeHint" class="mode-hint"></p>
+<div id="quoteForm">
+<div id="jewelryField" class="field hidden"><label for="jewelryType">Tipo de joya</label><select id="jewelryType"><option value="">Selecciona tu pieza</option><option>Cadena</option><option>Anillo</option><option>Pulsera / manilla</option><option>Aretes</option><option>Dije</option><option>Otra joya</option></select></div>
+<div class="field"><label for="weight">Peso aproximado</label><div class="weight-wrap"><input id="weight" inputmode="decimal" autocomplete="off" placeholder="Ej. 18.5" aria-describedby="weightHelp"><span>gramos</span></div><label id="weightUnknownLabel" class="check-label hidden"><input id="weightUnknown" type="checkbox"> No sé cuánto pesa</label><small id="weightHelp">Si tiene piedras, el peso del oro se verifica por separado.</small></div>
+<div class="field"><div class="field-head"><span class="field-label" id="karatLabel">Quilataje</span><small>El sello de tu pieza</small></div><div class="karats" role="group" aria-labelledby="karatLabel">
+<button class="karat" data-karat="10K" aria-pressed="false">10K</button><button class="karat" data-karat="14K" aria-pressed="false">14K</button><button class="karat" data-karat="18K" aria-pressed="false">18K</button><button class="karat" data-karat="21K" aria-pressed="false">21K</button><button class="karat" data-karat="22K" aria-pressed="false">22K</button><button class="karat" data-karat="24K" aria-pressed="false">24K</button><button class="karat unknown" data-karat="unknown" aria-pressed="false">No sé</button></div></div>
+<div id="unknownNotice" class="notice hidden">Te ayudamos a verificar el quilataje por WhatsApp.</div><div id="quoteError" class="error hidden" role="alert"></div>
+<button id="quoteButton" class="btn btn-gold full" disabled>CALCULAR VALOR DEL METAL →</button><a id="detailsWhatsapp" class="btn btn-gold full hidden" aria-disabled="true" tabindex="-1">NEGOCIAR POR WHATSAPP →</a>
+<p id="formNote" class="fineprint"></p></div>
+<div id="quoteResult" class="result hidden" aria-live="polite"><div class="result-kicker">Estimación del oro para fundición</div><div id="resultAmount" class="amount"></div><div id="resultMeta" class="quote-tag"></div><p class="result-copy">Valor del metal por peso y pureza. No es una valoración de la joya. Sujeto a verificación presencial.</p><div id="resultTime" class="result-time"></div><div id="staleWarning" class="warning hidden">La tasa requiere confirmación.</div><a id="acceptOffer" class="btn btn-gold full">CONTINUAR POR WHATSAPP →</a><button id="resetQuote" class="btn btn-ghost full">CAMBIAR DATOS</button></div>
+</div></div></div></section>
+<section class="section white" id="como-funciona"><div class="container"><div class="section-heading"><div class="eyebrow dark">Así de sencillo</div><h2>Del dato al trato.</h2></div><div class="steps"><article class="step"><span class="step-num">01</span><h3>Describe tu oro</h3><p>Tipo, peso y quilataje.</p></article><article class="step"><span class="step-num">02</span><h3>Hablemos por WhatsApp</h3><p>Comparte fotos y negocia con nosotros.</p></article><article class="step"><span class="step-num">03</span><h3>Verificamos y acordamos</h3><p>Evaluación presencial antes de cerrar la compra.</p></article></div></div></section>
+<section class="section"><div class="container faq-grid"><div class="section-intro"><h2>¿Tienes dudas?</h2></div><div class="faq"><details><summary>¿Por qué hay dos opciones? <span>+</span></summary><p>La estimación para fundición considera el oro por peso y pureza. Para vender una joya, revisamos la pieza y negociamos su valoración contigo por WhatsApp.</p></details><details><summary>¿Y si no sé el peso o los quilates? <span>+</span></summary><p>En joyas puedes marcar «No sé». También puedes escribirnos directamente y te orientamos.</p></details><details><summary>¿La estimación es el precio final? <span>+</span></summary><p>No. Confirmamos el peso, la pureza y las características de la pieza presencialmente antes de acordar el precio.</p></details></div></div></section>
+</main>
+<footer class="footer"><div class="container"><a class="brand" href="#"><span class="brand-mark">O</span> ORO CASH RD</a><p>Compra de oro · República Dominicana</p><div class="footer-bottom">© 2026 ORO CASH RD · Cotizaciones orientativas sujetas a evaluación.</div></div></footer>
+<a id="whatsappFloat" class="wa-float" aria-label="Hablar con ORO CASH RD por WhatsApp">WA</a>
+<script src="./config.js"></script><script src="./app.js?v=20260926-joyas"></script>
+</body></html>
