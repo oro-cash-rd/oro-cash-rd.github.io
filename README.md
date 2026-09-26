@@ -15,7 +15,7 @@ Frontend 100% estático para GitHub Pages.
 1. El cliente elige joya u oro para fundición.
 2. Joyas: declara tipo, peso aproximado (o desconocido) y quilataje (o desconocido). Abre WhatsApp con esos datos para valoración manual, sin cotización automática.
 3. Fundición: peso y quilataje conocido se envían a `/quote`. Se muestra una estimación explícita del metal; el quilataje desconocido deriva a WhatsApp.
-4. Los botones usan enlaces nativos `wa.me` al WhatsApp comercial con el mensaje preparado. El cliente revisa y envía el mensaje en WhatsApp.
+4. Los botones abren la app con Android Intent o `whatsapp://` en iOS; en escritorio usan `wa.me`. Android incluye fallback HTTPS si no hay una app compatible. Las confirmaciones del sistema/navegador no pueden suprimirse. El cliente revisa y envía el mensaje en WhatsApp.
 5. No se solicita teléfono, no se abre modal y no se llama a `/negotiate`. La función antigua permanece disponible para compatibilidad, pero este frontend no la usa.
 
 ## Seguridad

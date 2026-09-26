@@ -6,7 +6,21 @@
   const state = { kind: null, karat: null, quote: null, generation: 0, loading: false }
   const money = value => new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP', maximumFractionDigits: 0 }).format(value).replace('DOP', 'RD$')
   const time = iso => new Intl.DateTimeFormat('es-DO', { timeZone: 'America/Santo_Domingo', day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(iso))
-  const wa = message => `https://wa.me/${businessWhatsapp}?text=${encodeURIComponent(message)}`
+  // Native links stay on the user's click: no popup or asynchronous redirect.
+  const wa = message => {
+    const text = encodeURIComponent(message)
+    const query = `phone=${businessWhatsapp}&text=${text}`
+    const fallback = `https://wa.me/${businessWhatsapp}?text=${text}`
+    const ua = navigator.userAgent || ''
+    if (/Android/i.test(ua)) {
+      // Let Android resolve WhatsApp / WhatsApp Business; Chrome falls back if unavailable.
+      return `intent://send?${query}#Intent;scheme=whatsapp;S.browser_fallback_url=${encodeURIComponent(fallback)};end`
+    }
+    if (/iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+      return `whatsapp://send?${query}`
+    }
+    return fallback
+  }
   const weight = () => Number($('weight').value.replace(',', '.'))
   const validWeight = () => Number.isFinite(weight()) && weight() > 0
   const manual = () => state.kind === 'jewelry' || state.karat === 'unknown'
