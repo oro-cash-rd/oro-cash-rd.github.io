@@ -41,6 +41,7 @@
   }
   document.querySelectorAll('[data-kind]').forEach(button => button.addEventListener('click', () => {
     state.kind = button.dataset.kind
+    button.parentElement.classList.remove('awaiting-choice')
     state.generation++
     state.loading = false
     state.quote = null
