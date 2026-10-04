@@ -1,9 +1,33 @@
+import { quoteFor, isCurrent } from './market.mjs'
 (() => {
   const cfg = window.ORO_CASH_CONFIG || {}
-  const apiBase = String(cfg.apiBaseUrl || '').replace(/\/$/, '')
   const businessWhatsapp = String(cfg.businessWhatsapp || '18298568905').replace(/\D/g, '')
   const $ = id => document.getElementById(id)
   const state = { kind: null, karat: null, quote: null, generation: 0, loading: false }
+  let currentRate = null
+  async function loadRate() {
+    const response = await fetch('./data/rates.json?t=' + Date.now(), { cache: 'no-store', signal: AbortSignal.timeout(15000) })
+    if (!response.ok) throw new Error('La tasa de hoy no está disponible. Escríbenos por WhatsApp.')
+    const rate = await response.json()
+    if (!isCurrent(rate)) throw new Error('La tasa de hoy no está disponible. Escríbenos por WhatsApp.')
+    currentRate = rate
+    return rate
+  }
+  function expireQuote() {
+    if (!state.quote || !cfg.dailyRates) return
+    if (Date.now() < Date.parse(state.quote.valid_until)) return
+    state.quote = null
+    $('acceptOffer').removeAttribute('href')
+    $('quoteResult').classList.add('hidden')
+    $('quoteForm').classList.remove('hidden')
+    $('quoteError').textContent = 'Cambió el día. Vuelve a calcular con la tasa actualizada.'
+    $('quoteError').classList.remove('hidden')
+    sync()
+  }
+  setInterval(expireQuote, 1000)
+  document.addEventListener('visibilitychange', expireQuote)
+  window.addEventListener('focus', expireQuote)
+  $('acceptOffer').addEventListener('click', event => { expireQuote(); if (!state.quote) event.preventDefault() })
   const money = value => new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP', maximumFractionDigits: 0 }).format(value).replace('DOP', 'RD$')
   const time = iso => new Intl.DateTimeFormat('es-DO', { timeZone: 'America/Santo_Domingo', day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(iso))
   // Native links stay on the user's click: no popup or asynchronous redirect.
@@ -41,6 +65,7 @@
   }
   document.querySelectorAll('[data-kind]').forEach(button => button.addEventListener('click', () => {
     state.kind = button.dataset.kind
+    if (state.kind === 'scrap') loadRate().catch(() => {})
     button.parentElement.classList.remove('awaiting-choice')
     state.generation++
     state.loading = false
@@ -76,9 +101,8 @@
     $('quoteButton').textContent = 'Calculando…'
     $('quoteError').classList.add('hidden')
     try {
-      const res = await fetch(`${apiBase}/quote`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ weight_grams: weight(), karat: state.karat }) })
-      const quote = await res.json()
-      if (!res.ok) throw new Error(quote.message || 'No pudimos obtener la cotización. Puedes escribirnos por WhatsApp.')
+      const rate = isCurrent(currentRate) ? currentRate : await loadRate()
+      const quote = quoteFor(weight(), state.karat, rate)
       if (generation !== state.generation) return
       state.quote = quote
       $('resultAmount').textContent = money(quote.estimated_offer_dop)
@@ -90,7 +114,7 @@
       $('quoteResult').classList.remove('hidden')
     } catch (error) {
       if (generation !== state.generation) return
-      $('quoteError').textContent = error.message || 'Cotización no disponible. Escríbenos por WhatsApp.'
+      $('quoteError').textContent = error.name === 'TimeoutError' || error.name === 'TypeError' ? 'No pudimos consultar la tasa de hoy. Intenta más tarde o escríbenos por WhatsApp.' : (error.message || 'Cotización no disponible. Escríbenos por WhatsApp.')
       $('quoteError').classList.remove('hidden')
     } finally {
       if (generation === state.generation) {
