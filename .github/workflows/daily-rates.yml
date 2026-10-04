@@ -1,0 +1,71 @@
+name: Tasa diaria y publicación
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 4,5,6 * * *'
+  push:
+    branches: [main]
+    paths-ignore: ['data/**', 'MIGRATION.md']
+permissions:
+  contents: read
+concurrency:
+  group: oro-cash-daily-publish
+  cancel-in-progress: false
+jobs:
+  refresh:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/daily.test.mjs
+      - id: prepare
+        run: node scripts/refresh.mjs prepare
+        env:
+          METALS_DEV_API_KEY: ${{ secrets.METALS_DEV_API_KEY }}
+      - name: Reservar consulta antes de llamar al proveedor
+        if: steps.prepare.outputs.refresh == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/budget.json
+          git commit -m 'Reserve daily market request'
+          git push origin HEAD:main
+      - name: Consultar Metals.Dev
+        if: steps.prepare.outputs.refresh == 'true'
+        run: node scripts/refresh.mjs fetch
+        env:
+          METALS_DEV_API_KEY: ${{ secrets.METALS_DEV_API_KEY }}
+      - name: Conservar tasa del día
+        if: steps.prepare.outputs.refresh == 'true'
+        run: |
+          git add data/rates.json
+          git commit -m 'Update daily market rate'
+          git push origin HEAD:main
+      - name: Preparar web
+        run: |
+          mkdir -p _site/data
+          cp index.html styles.css app.js config.js market.mjs _site/
+          cp data/rates.json _site/data/
+          touch _site/.nojekyll
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+  deploy:
+    needs: refresh
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
