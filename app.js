@@ -1,15 +1,14 @@
 import { quoteFor, isCurrent } from './market.mjs'
+import { createRateClient } from './rates-client.mjs'
 (() => {
   const cfg = window.ORO_CASH_CONFIG || {}
   const businessWhatsapp = String(cfg.businessWhatsapp || '18298568905').replace(/\D/g, '')
   const $ = id => document.getElementById(id)
   const state = { kind: null, karat: null, quote: null, generation: 0, loading: false }
   let currentRate = null
+  const getRate = createRateClient()
   async function loadRate() {
-    const response = await fetch('./data/rates.json?t=' + Date.now(), { cache: 'no-store', signal: AbortSignal.timeout(15000) })
-    if (!response.ok) throw new Error('La tasa de hoy no está disponible. Escríbenos por WhatsApp.')
-    const rate = await response.json()
-    if (!isCurrent(rate)) throw new Error('La tasa de hoy no está disponible. Escríbenos por WhatsApp.')
+    const rate = await getRate()
     currentRate = rate
     return rate
   }
@@ -126,4 +125,6 @@ import { quoteFor, isCurrent } from './market.mjs'
   })
   $('resetQuote').addEventListener('click', () => { state.quote = null; $('quoteResult').classList.add('hidden'); $('quoteForm').classList.remove('hidden'); sync() })
   sync()
+  // Opening the page refreshes the shared daily snapshot, even without a click.
+  loadRate().catch(() => {})
 })()
