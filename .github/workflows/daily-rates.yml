@@ -24,8 +24,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tests/daily.test.mjs
+      - run: npm test
+      - id: source
+        run: node -e "const fs=require('fs'); const source=JSON.parse(fs.readFileSync('data/rates-source.json')); fs.appendFileSync(process.env.GITHUB_OUTPUT, 'demand=' + Boolean(source.mode === 'demand' && source.url) + '\n')"
       - id: prepare
+        if: steps.source.outputs.demand != 'true'
         run: node scripts/refresh.mjs prepare
         env:
           METALS_DEV_API_KEY: ${{ secrets.METALS_DEV_API_KEY }}
@@ -51,8 +54,8 @@ jobs:
       - name: Preparar web
         run: |
           mkdir -p _site/data
-          cp index.html styles.css app.js config.js market.mjs _site/
-          cp data/rates.json _site/data/
+          cp index.html styles.css app.js config.js market.mjs rates-client.mjs _site/
+          cp data/rates.json data/rates-source.json _site/data/
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v4
         with:

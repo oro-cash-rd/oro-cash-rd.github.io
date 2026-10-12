@@ -1,0 +1,68 @@
+name: Activar tasa compartida por visita
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  # Avoid concurrent provider calls with the legacy job during the cutover.
+  group: oro-cash-daily-publish
+  cancel-in-progress: false
+jobs:
+  activate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Comprobar configuración sin mostrar secretos
+        env:
+          METALS_DEV_API_KEY: ${{ secrets.METALS_DEV_API_KEY }}
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo 'Falta CLOUDFLARE_API_TOKEN'; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo 'Falta CLOUDFLARE_ACCOUNT_ID'; exit 1; }
+          test -n "$METALS_DEV_API_KEY" || { echo 'Falta METALS_DEV_API_KEY'; exit 1; }
+      - run: npm test
+      - name: Conservar consumo previo de Metals.Dev
+        run: node -e "const fs=require('fs');const budget=JSON.parse(fs.readFileSync('data/budget.json'));fs.writeFileSync('workers/daily-rates/seed.mjs','export default '+JSON.stringify(budget)+'\n')"
+      - name: Desplegar servicio
+        run: npx --yes wrangler@4.149.0 deploy --config workers/daily-rates/wrangler.jsonc
+      - name: Instalar la clave existente como secreto del servicio
+        env:
+          METALS_DEV_API_KEY: ${{ secrets.METALS_DEV_API_KEY }}
+        run: printf '%s' "$METALS_DEV_API_KEY" | npx --yes wrangler@4.149.0 secret put METALS_DEV_API_KEY --config workers/daily-rates/wrangler.jsonc
+      - name: Validar servicio real antes de cambiar la web
+        run: node scripts/activate-cloudflare-rates.mjs
+      - name: Guardar URL pública y snapshot; ninguna clave
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/rates-source.json data/rates.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Activate shared on-demand daily rate service'
+            git push origin HEAD:main
+          fi
+      - name: Publicar Oro Cash conectado al servicio
+        run: |
+          mkdir -p _site/data
+          cp index.html styles.css app.js config.js market.mjs rates-client.mjs _site/
+          cp data/rates.json data/rates-source.json _site/data/
+          touch _site/.nojekyll
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
