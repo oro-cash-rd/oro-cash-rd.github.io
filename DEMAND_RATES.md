@@ -12,7 +12,7 @@ Si el proveedor responde con datos inválidos/antiguos, falla o agota su cuota, 
 
 ## Estado productivo
 
-Activado el 12 de octubre de 2026. `data/rates-source.json` público indica `mode: demand` y `https://oro-cash-daily-rates.omartinezg930112.workers.dev/api/rates`. Worker independiente en Workers Free; Durable Object `DailyRates` con migración `v1` / `new_sqlite_classes`. No se contrató un plan de pago.
+Activado el 12 de octubre de 2026. `data/rates-source.json` público indica `mode: demand` y `https://oro-cash-daily-rates.omartinezg930112.workers.dev/api/rates`. Worker independiente en Workers Free; Durable Object `DailyRates` con migración `v1` / `new_sqlite_classes`, confirmado como SQLite en el panel real. No se contrató un plan de pago. [Disponibilidad oficial en Free](https://developers.cloudflare.com/durable-objects/platform/pricing/).
 
 La activación trasladó la primera tasa válida de hoy y el consumo previo (1 diario / 10 mensual). Conservó `fetchedAt=1791804282895`, sin solicitar otra tasa ni cambiar timestamps. Los días siguientes se actualizan por el primer GET al servicio, independientemente de Actions. Reintentar activación importa solo consumo legado adicional; desplegar no reinicia los contadores persistidos.
 
@@ -48,6 +48,8 @@ Evidencia del 12/10/2026:
 - [Registro de Chrome](evidence/browser-load.json): recarga de Oro Cash sin elegir ninguna opción; GET de configuración y GET `/api/rates` HTTP 200; mismo snapshot. [Captura](evidence/public-load.jpg).
 - 11 pruebas locales y en Actions aprobadas. Proveedor simulado para fallos, cuota, cambio de día/mes y 100 peticiones concurrentes; no se provocaron fallos reales ni se borró el snapshot para gastar otra consulta.
 - Tarea existente `Imagen diaria del oro` (`6acafed631e08191ba8aed5404401239`): inspeccionada en ChatGPT, activa, diaria a las 09:00 hora de República Dominicana, zona visible estándar del Atlántico. Su prompt descubre `data/rates-source.json`, consulta el endpoint en modo demand y mantiene `America/Santo_Domingo`. No se creó una tarea duplicada ni se cambió su configuración.
+- [Ejecución manual de la tarea existente](evidence/merca-task-verification.json): confirmó que el servicio compartido respondía con el snapshot válido de hoy, verificó las unidades y obtuvo exactamente los cuatro precios indicados abajo. La imagen seguía en generación al observar esta validación; aquí se verifica la integración de tasas, no se afirma la entrega de esa imagen.
+- [Publicación tras guardar evidencia](https://github.com/oro-cash-rd/oro-cash-rd.github.io/actions/runs/38269747994): éxito, reserva y consulta Metals.Dev omitidas en modo demand. La actualización diaria continúa por GET al servicio.
 
 Snapshot preservado: gold `4170.75` USD/onza troy, fx `60.6752520894418` DOP/USD, día `2026-10-12`, fetchedAt `2026-10-12T11:24:42.895Z` (07:24:42.895 RD); metal `11:24:12.075Z`, moneda `11:23:08.262Z`. La respuesta de Metals.Dev en USD usa `currencies.DOP` como USD por DOP: se invierte una sola vez al producir fx. [Documentación del proveedor](https://metals.dev/docs).
 

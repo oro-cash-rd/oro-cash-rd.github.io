@@ -1,0 +1,17 @@
+{
+  "recordedAt": "2026-10-12T15:25:00.258Z",
+  "task": "Imagen diaria del oro",
+  "automationId": "6acafed631e08191ba8aed5404401239",
+  "scheduleObserved": "Daily, 09:00 Republica Dominicana; Atlantic Standard Time",
+  "promptTimezone": "America/Santo_Domingo",
+  "promptDiscovery": "Reads data/rates-source.json from main or the published site, then GET url when mode=demand",
+  "configurationChanged": false,
+  "duplicateCreated": false,
+  "manualExecutionObserved": true,
+  "observedResponse": [
+    "169 text El servicio compartido ya responde y devuelve un snapshot válido del 12 de octubre, obtenido a las 7:24 a. m. dominicanas. Los precios por gramo son RD$3,390.05, RD$4,746.06, RD$6,102.08 y RD$8,136.11. Usaré la herramienta de imágenes para crear la pieza y comprobaré el formato cuadrado y los textos antes de entregarla.",
+    "174 text La respuesta comenzó La  validación  confirma  las  unidades  USD  por  onza  troy  y  DOP  por  dólar,  y  que  ambos  datos  tienen  menos  de  24  horas.  La  imagen  sigue  en  generación;  después  revisaré  las  cifras,  el  logo  y  las  dimensiones."
+  ],
+  "imageGeneration": "In progress when rate verification was observed",
+  "evidenceType": "Read-only observation of existing task configuration and its response; service and browser HTTP evidence are separate"
+}
