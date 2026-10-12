@@ -1,0 +1,74 @@
+{
+  "checkedAt": "2026-10-12T15:18:33.131Z",
+  "source": {
+    "mode": "demand",
+    "url": "https://oro-cash-daily-rates.omartinezg930112.workers.dev/api/rates"
+  },
+  "health": {
+    "service": "oro-cash-daily-rates",
+    "configured": true
+  },
+  "rate": {
+    "day": "2026-10-12",
+    "fetchedAt": 1791804282895,
+    "gold": 4170.75,
+    "fx": 60.6752520894418,
+    "metalTimestamp": "2026-10-12T11:24:12.075Z",
+    "currencyTimestamp": "2026-10-12T11:23:08.262Z"
+  },
+  "units": {
+    "gold": "USD/troy ounce (toz)",
+    "fx": "DOP/USD"
+  },
+  "before": {
+    "day": "2026-10-12",
+    "budget": {
+      "day": "2026-10-12",
+      "month": "2026-10",
+      "daily": 1,
+      "monthly": 10,
+      "nextAttemptAt": 0
+    },
+    "fetchedAt": 1791804282895,
+    "current": true
+  },
+  "afterFirst": {
+    "day": "2026-10-12",
+    "budget": {
+      "day": "2026-10-12",
+      "month": "2026-10",
+      "daily": 1,
+      "monthly": 10,
+      "nextAttemptAt": 0
+    },
+    "fetchedAt": 1791804282895,
+    "current": true
+  },
+  "after": {
+    "day": "2026-10-12",
+    "budget": {
+      "day": "2026-10-12",
+      "month": "2026-10",
+      "daily": 1,
+      "monthly": 10,
+      "nextAttemptAt": 0
+    },
+    "fetchedAt": 1791804282895,
+    "current": true
+  },
+  "checks": {
+    "sequential": 3,
+    "concurrent": 20,
+    "identicalSnapshot": true,
+    "noExtraProviderReservations": true,
+    "post": 405,
+    "options": 204,
+    "missing": 404
+  },
+  "mercaOroDopPerGram": {
+    "10K": "3390.05",
+    "14K": "4746.06",
+    "18K": "6102.08",
+    "24K": "8136.11"
+  }
+}

@@ -1,0 +1,80 @@
+
+> test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# Subtest: Dominican midnight and expiry
+ok 1 - Dominican midnight and expiry
+  ---
+  duration_ms: 12.8144
+  type: 'test'
+  ...
+# Subtest: independent known production quotes and purity
+ok 2 - independent known production quotes and purity
+  ---
+  duration_ms: 3.3161
+  type: 'test'
+  ...
+# Subtest: reject old market data, invalid FX, wrong units and future timestamps
+ok 3 - reject old market data, invalid FX, wrong units and future timestamps
+  ---
+  duration_ms: 0.2247
+  type: 'test'
+  ...
+# Subtest: Actions: reserve quota, skip current rate, and reject missing key / exhausted quota
+ok 4 - Actions: reserve quota, skip current rate, and reject missing key / exhausted quota
+  ---
+  duration_ms: 354.7764
+  type: 'test'
+  ...
+# Subtest: cutover preserves the first legacy snapshot and quota; redeploy imports only extra legacy consumption
+ok 5 - cutover preserves the first legacy snapshot and quota; redeploy imports only extra legacy consumption
+  ---
+  duration_ms: 29.683
+  type: 'test'
+  ...
+# Subtest: status reads never spend provider quota, including when snapshot is expired
+ok 6 - status reads never spend provider quota, including when snapshot is expired
+  ---
+  duration_ms: 0.4944
+  type: 'test'
+  ...
+# Subtest: 100 simultaneous visitors and Merca Oro share one durable daily call; midnight refreshes once
+ok 7 - 100 simultaneous visitors and Merca Oro share one durable daily call; midnight refreshes once
+  ---
+  duration_ms: 68.3803
+  type: 'test'
+  ...
+# Subtest: invalid/old provider data cannot replace snapshot; retry cooldown and durable 3/day quota
+ok 8 - invalid/old provider data cannot replace snapshot; retry cooldown and durable 3/day quota
+  ---
+  duration_ms: 2.5648
+  type: 'test'
+  ...
+# Subtest: monthly quota persists across dates, resets at Dominican month boundary, and missing key makes no call
+ok 9 - monthly quota persists across dates, resets at Dominican month boundary, and missing key makes no call
+  ---
+  duration_ms: 1.0619
+  type: 'test'
+  ...
+# Subtest: worker is public read-only, errors contain no provider key, OPTIONS does not query provider
+ok 10 - worker is public read-only, errors contain no provider key, OPTIONS does not query provider
+  ---
+  duration_ms: 0.479
+  type: 'test'
+  ...
+# Subtest: browser first visit calls demand service, deduplicates, caches until midnight, fails closed without static fallback
+ok 11 - browser first visit calls demand service, deduplicates, caches until midnight, fails closed without static fallback
+  ---
+  duration_ms: 1.1668
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 429.8729

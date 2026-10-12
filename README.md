@@ -2,9 +2,9 @@
 
 Sitio estático en https://oro-cash-rd.github.io/ con cotización diaria de oro para fundición y valoración de joyas por WhatsApp.
 
-GitHub Actions consulta Metals.Dev y publica una tasa diaria fija para República Dominicana. La clave se guarda únicamente como secreto `METALS_DEV_API_KEY`. Si no hay una tasa vigente, no se muestra una cotización numérica. Los horarios programados pueden retrasarse; la web espera una tasa nueva antes de cotizar.
+La primera visita del día consulta el servicio compartido de tasas, que obtiene oro y USD/DOP juntos de Metals.Dev y conserva el primer snapshot válido hasta medianoche dominicana. La clave permanece en el Worker como secreto `METALS_DEV_API_KEY`. Si no hay una tasa vigente, no se muestra una cotización numérica. GitHub Actions publica cambios de la web, sin consultar al proveedor en modo `demand`.
 
-El candidato de consulta por primera visita y caché diaria compartida con Merca Oro está documentado en [DEMAND_RATES.md](DEMAND_RATES.md). Se activa solo después de verificar su servicio real; hasta entonces permanece la fuente anterior.
+El servicio está activo en Cloudflare Workers Free con un Durable Object SQLite. Configuración pública: [data/rates-source.json](data/rates-source.json). Operación y evidencia: [DEMAND_RATES.md](DEMAND_RATES.md).
 
 El cálculo se realiza en el navegador con peso, pureza y un porcentaje de compra de 75%. Las tasas y la fórmula son públicas. Las nuevas cotizaciones no se guardan en una base de datos.
 

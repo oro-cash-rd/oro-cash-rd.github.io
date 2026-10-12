@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-12T15:17:22.645Z",
+  "action": "Reload of published page; no quote or selling choice clicked",
+  "requests": [
+    {
+      "event": "Network.requestWillBeSent",
+      "url": "https://oro-cash-rd.github.io/data/rates-source.json",
+      "method": "GET",
+      "initiator": "script"
+    },
+    {
+      "event": "Network.responseReceived",
+      "url": "https://oro-cash-rd.github.io/data/rates-source.json",
+      "status": 200
+    },
+    {
+      "event": "Network.requestWillBeSent",
+      "url": "https://oro-cash-daily-rates.omartinezg930112.workers.dev/api/rates",
+      "method": "GET",
+      "initiator": "script"
+    },
+    {
+      "event": "Network.responseReceived",
+      "url": "https://oro-cash-daily-rates.omartinezg930112.workers.dev/api/rates",
+      "status": 200
+    }
+  ],
+  "snapshot": {
+    "day": "2026-10-12",
+    "fetchedAt": 1791804282895,
+    "gold": 4170.75,
+    "fx": 60.6752520894418,
+    "metalTimestamp": "2026-10-12T11:24:12.075Z",
+    "currencyTimestamp": "2026-10-12T11:23:08.262Z"
+  }
+}
