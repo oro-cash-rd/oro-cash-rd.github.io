@@ -1,4 +1,4 @@
 {
-  "mode": "legacy",
-  "url": null
+  "mode": "demand",
+  "url": "https://oro-cash-daily-rates.omartinezg930112.workers.dev/api/rates"
 }
