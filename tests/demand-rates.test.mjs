@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import worker, { DailyRates } from '../workers/daily-rates/worker.mjs'
 import { createRateClient } from '../rates-client.mjs'
+import seed from '../workers/daily-rates/seed.mjs'
 
 const START = Date.parse('2026-10-12T12:00:00Z')
 function context(map = new Map()) {
@@ -16,6 +17,49 @@ function context(map = new Map()) {
   }
 }
 const provider = at => ({ status: 'success', currency: 'USD', unit: 'toz', metals: { gold: 4200 }, currencies: { DOP: 1 / 61 }, timestamps: { metal: new Date(at - 1000).toISOString(), currency: new Date(at - 2000).toISOString() } })
+
+test('cutover preserves the first legacy snapshot and quota; redeploy imports only extra legacy consumption', async () => {
+  const oldSeed = structuredClone(seed), oldNow = Date.now, oldFetch = globalThis.fetch
+  const rate = { day: '2026-10-12', fetchedAt: START - 1000, gold: 4200, fx: 61 }
+  const map = new Map()
+  let calls = 0
+  Date.now = () => START
+  globalThis.fetch = async () => { calls++; throw new Error('must not call') }
+  Object.assign(seed, { day: '2026-10-12', month: '2026-10', daily: 1, monthly: 10, rate })
+  try {
+    const service = new DailyRates(context(map), { METALS_DEV_API_KEY: 'test-only' })
+    assert.deepEqual(await (await service.fetch()).json(), rate)
+    assert.equal(map.get('budget').daily, 1)
+    assert.equal(map.get('budget').monthly, 10)
+    // A reservation by the Worker plus another legacy call during failed cutover.
+    map.set('budget', { ...map.get('budget'), daily: 2, monthly: 11 })
+    seed.daily = 2; seed.monthly = 11
+    const restarted = new DailyRates(context(map), { METALS_DEV_API_KEY: 'test-only' })
+    const status = await (await restarted.fetch(new Request('https://internal/api/status'))).json()
+    assert.equal(status.budget.daily, 3)
+    assert.equal(status.budget.monthly, 12)
+    assert.equal(status.fetchedAt, rate.fetchedAt)
+    await restarted.fetch()
+    assert.equal(map.get('budget').monthly, 12)
+    assert.equal(calls, 0)
+  } finally {
+    for (const key of Object.keys(seed)) delete seed[key]
+    Object.assign(seed, oldSeed)
+    Date.now = oldNow; globalThis.fetch = oldFetch
+  }
+})
+
+test('status reads never spend provider quota, including when snapshot is expired', async () => {
+  const oldNow = Date.now, oldFetch = globalThis.fetch
+  Date.now = () => START
+  globalThis.fetch = async () => { throw new Error('must not call') }
+  try {
+    const service = new DailyRates(context(), { METALS_DEV_API_KEY: 'test-only' })
+    const status = await (await service.fetch(new Request('https://internal/api/status'))).json()
+    assert.equal(status.current, false)
+    assert.equal(status.budget.monthly, 0)
+  } finally { Date.now = oldNow; globalThis.fetch = oldFetch }
+})
 
 test('100 simultaneous visitors and Merca Oro share one durable daily call; midnight refreshes once', async () => {
   const oldNow = Date.now, oldFetch = globalThis.fetch

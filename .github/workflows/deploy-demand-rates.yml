@@ -37,7 +37,7 @@ jobs:
           test -n "$METALS_DEV_API_KEY" || { echo 'Falta METALS_DEV_API_KEY'; exit 1; }
       - run: npm test
       - name: Conservar consumo previo de Metals.Dev
-        run: node -e "const fs=require('fs');const budget=JSON.parse(fs.readFileSync('data/budget.json'));fs.writeFileSync('workers/daily-rates/seed.mjs','export default '+JSON.stringify(budget)+'\n')"
+        run: node -e "const fs=require('fs');const budget=JSON.parse(fs.readFileSync('data/budget.json'));const rate=JSON.parse(fs.readFileSync('data/rates.json'));fs.writeFileSync('workers/daily-rates/seed.mjs','export default '+JSON.stringify({...budget,rate})+'\n')"
       - name: Desplegar servicio
         run: npx --yes wrangler@4.149.0 deploy --config workers/daily-rates/wrangler.jsonc
       - name: Instalar la clave existente como secreto del servicio
