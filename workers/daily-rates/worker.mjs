@@ -1,6 +1,11 @@
 import { dayKey, parseMarket, isCurrent } from '../../market.mjs'
 import seed from './seed.mjs'
 
+const validationReasons = new Set(['provider_status', 'currency_unit', 'metal_unit', 'gold_value', 'fx_value', 'fx_range', 'metal_timestamp_invalid', 'metal_timestamp_old', 'metal_timestamp_future', 'currency_timestamp_invalid', 'currency_timestamp_old', 'currency_timestamp_future'])
+const providerCode = data => Number.isSafeInteger(data?.error_code) && data.error_code >= 0 && data.error_code <= 99999 ? data.error_code : null
+const timestampAge = (value, now) => typeof value === 'string' && Number.isFinite(Date.parse(value)) ? now - Date.parse(value) : null
+const log = record => { try { console.log(JSON.stringify(record)) } catch {} }
+
 const json = (body, status = 200, retry = null) => new Response(JSON.stringify(body), {
   status,
   headers: {
@@ -14,6 +19,16 @@ const json = (body, status = 200, retry = null) => new Response(JSON.stringify(b
 // One global object serializes both Oro Cash visits and Merca Oro requests.
 export class DailyRates {
   constructor(ctx, env) { this.ctx = ctx; this.env = env }
+  async recordAttempt(record) {
+    log(record)
+    try {
+      const history = await this.ctx.storage.get('attemptHistory') || []
+      await this.ctx.storage.put('attemptHistory', [...history, record].slice(-6))
+    } catch {
+      // Diagnostics must not change the outcome or leak storage exceptions.
+      log({ event: 'daily_rate_diagnostic_store_failed', day: record.day, attempt: record.attempt })
+    }
+  }
   async fetch(request = new Request('https://internal/api/rates')) {
     return this.ctx.blockConcurrencyWhile(async () => {
       const now = Date.now(), day = dayKey(now), month = day.slice(0, 7)
@@ -36,7 +51,7 @@ export class DailyRates {
         await this.ctx.storage.put('rate', rate)
       }
       // Read-only diagnostics never initiate a provider request.
-      if (new URL(request.url).pathname === '/api/status') return json({ day, budget, fetchedAt: rate?.fetchedAt ?? null, current: isCurrent(rate, now) })
+      if (new URL(request.url).pathname === '/api/status') return json({ day, budget, fetchedAt: rate?.fetchedAt ?? null, current: isCurrent(rate, now), attempts: await this.ctx.storage.get('attemptHistory') || [] })
       if (isCurrent(rate, now)) return json(rate)
       if (!this.env.METALS_DEV_API_KEY) return json({ error: 'service_not_configured', day }, 503)
       if (budget.daily >= 3 || budget.monthly >= 95) return json({ error: 'provider_quota_limit', day }, 503)
@@ -46,15 +61,43 @@ export class DailyRates {
       budget.monthly++
       budget.nextAttemptAt = now + 60000
       await this.ctx.storage.put('budget', budget)
+      const startedAt = Date.now()
+      const record = { event: 'daily_rate_attempt', day, attempt: budget.daily, monthly: budget.monthly, startedAt, finishedAt: null, durationMs: null, providerDurationMs: null, stage: 'fetch', result: 'failure', reason: null, httpStatus: null, providerCode: null, metalAgeMs: null, currencyAgeMs: null }
+      log({ event: 'daily_rate_attempt_started', day, attempt: budget.daily, monthly: budget.monthly, startedAt })
       try {
         const url = new URL('https://api.metals.dev/v1/latest')
         url.search = new URLSearchParams({ api_key: this.env.METALS_DEV_API_KEY, currency: 'USD', unit: 'toz' })
         const response = await fetch(url, { signal: AbortSignal.timeout(10000), redirect: 'error' })
-        if (!response.ok) throw new Error('provider_failed')
-        const result = parseMarket(await response.json(), Date.now())
+        record.providerDurationMs = Math.max(0, Date.now() - startedAt)
+        record.httpStatus = response.status
+        if (!response.ok) {
+          record.stage = 'http'; record.reason = 'provider_http'
+          try { record.providerCode = providerCode(await response.json()) } catch {}
+          throw new Error('provider_failed')
+        }
+        record.stage = 'decode'
+        const data = await response.json()
+        const parsedAt = Date.now()
+        record.providerCode = providerCode(data)
+        record.metalAgeMs = timestampAge(data?.timestamps?.metal ?? data?.timestamp, parsedAt)
+        record.currencyAgeMs = timestampAge(data?.timestamps?.currency ?? data?.timestamp, parsedAt)
+        record.stage = 'validate'
+        const result = parseMarket(data, parsedAt)
+        record.stage = 'persist_rate'
         await this.ctx.storage.put('rate', result)
+        record.result = 'success'; record.reason = 'ok'
+        record.finishedAt = Date.now(); record.durationMs = Math.max(0, record.finishedAt - startedAt)
+        await this.recordAttempt(record)
         return json(result)
-      } catch {
+      } catch (error) {
+        if (record.stage === 'fetch') {
+          record.reason = error?.name === 'TimeoutError' || error?.name === 'AbortError' ? 'provider_timeout' : 'provider_network'
+          record.providerDurationMs = Math.max(0, Date.now() - startedAt)
+        } else if (record.stage === 'decode') record.reason = 'provider_json'
+        else if (record.stage === 'validate') record.reason = validationReasons.has(error?.reason) ? error.reason : 'validation_rejected'
+        else if (record.stage === 'persist_rate') record.reason = 'snapshot_store_failed'
+        record.finishedAt = Date.now(); record.durationMs = Math.max(0, record.finishedAt - startedAt)
+        await this.recordAttempt(record)
         // Do not leak URLs, keys or provider error bodies; never re-date old data.
         return json({ error: 'fresh_rate_unavailable', day: dayKey(Date.now()) }, 503, 60)
       }

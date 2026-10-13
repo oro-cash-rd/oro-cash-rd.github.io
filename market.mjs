@@ -3,18 +3,26 @@ export const dayKey = now => {
   const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: DAY_ZONE, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date(now)).map(p => [p.type, p.value]))
   return `${parts.year}-${parts.month}-${parts.day}`
 }
-export const unavailable = () => new Error('La tasa de hoy no está disponible. Intenta más tarde o escríbenos por WhatsApp.')
+export const unavailable = (reason = 'market_unavailable') => Object.assign(new Error('La tasa de hoy no está disponible. Intenta más tarde o escríbenos por WhatsApp.'), { reason })
 export function isCurrent(rate, now = Date.now()) {
   return Boolean(rate && rate.day === dayKey(now) && Number.isFinite(rate.fetchedAt) && rate.fetchedAt <= now && now - rate.fetchedAt < 86400000 && rate.day === dayKey(rate.fetchedAt) && Number.isFinite(rate.gold) && rate.gold > 0 && Number.isFinite(rate.fx) && rate.fx >= 10 && rate.fx <= 200)
 }
 export function parseMarket(data, now) {
-  if (data?.status !== 'success' || data.currency !== 'USD' || data.unit !== 'toz') throw unavailable()
+  if (data?.status !== 'success') throw unavailable('provider_status')
+  if (data.currency !== 'USD') throw unavailable('currency_unit')
+  if (data.unit !== 'toz') throw unavailable('metal_unit')
   const gold = data.metals?.gold, inverseFx = data.currencies?.DOP
-  if (typeof gold !== 'number' || !Number.isFinite(gold) || gold <= 0 || typeof inverseFx !== 'number' || !Number.isFinite(inverseFx) || inverseFx <= 0) throw unavailable()
+  if (typeof gold !== 'number' || !Number.isFinite(gold) || gold <= 0) throw unavailable('gold_value')
+  if (typeof inverseFx !== 'number' || !Number.isFinite(inverseFx) || inverseFx <= 0) throw unavailable('fx_value')
   const fx = 1 / inverseFx
-  if (fx < 10 || fx > 200) throw unavailable()
+  if (fx < 10 || fx > 200) throw unavailable('fx_range')
   const timestamps = [data.timestamps?.metal ?? data.timestamp, data.timestamps?.currency ?? data.timestamp]
-  if (timestamps.some(t => typeof t !== 'string' || !Number.isFinite(Date.parse(t)) || now - Date.parse(t) > 180000 || Date.parse(t) - now > 120000)) throw unavailable()
+  for (const [index, timestamp] of timestamps.entries()) {
+    const field = index === 0 ? 'metal' : 'currency'
+    if (typeof timestamp !== 'string' || !Number.isFinite(Date.parse(timestamp))) throw unavailable(`${field}_timestamp_invalid`)
+    if (now - Date.parse(timestamp) > 180000) throw unavailable(`${field}_timestamp_old`)
+    if (Date.parse(timestamp) - now > 120000) throw unavailable(`${field}_timestamp_future`)
+  }
   return { day: dayKey(now), fetchedAt: now, gold, fx, metalTimestamp: timestamps[0], currencyTimestamp: timestamps[1] }
 }
 // Decimal rational arithmetic; 10K is exactly 10/24, other purities match the existing backend.
