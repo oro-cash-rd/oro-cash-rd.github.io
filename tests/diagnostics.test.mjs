@@ -41,6 +41,10 @@ const status = service => service.fetch(new Request('https://internal/api/status
 
 test('failure diagnostics distinguish HTTP, provider code, JSON, network, timeout and validation without secrets', async () => {
   const cases = [
+    ['provider_http', 'http', 302, null, (url, init) => {
+      assert.equal(init.redirect, 'manual')
+      return new Response(null, { status: 302, headers: { Location: unsafe } })
+    }],
     ['provider_http', 'http', 401, 1101, () => Response.json({ error_code: 1101, error_message: unsafe }, { status: 401 })],
     ['provider_http', 'http', 429, 1203, () => Response.json({ error_code: 1203, api_key: SECRET }, { status: 429 })],
     ['provider_http', 'http', 502, null, () => new Response(unsafe, { status: 502 })],
@@ -154,4 +158,26 @@ test('three-minute and two-minute timestamp boundaries are unchanged', () => {
   assert.throws(() => parseMarket(payload, START), { reason: 'metal_timestamp_old' })
   payload.timestamps = { metal: new Date(START).toISOString(), currency: new Date(START + 120001).toISOString() }
   assert.throws(() => parseMarket(payload, START), { reason: 'currency_timestamp_future' })
+})
+
+test('incident recovery preserves reservations, permits one extra attempt, expires next day and respects monthly quota', async () => {
+  await scenario(() => { throw new Error(unsafe) }, async ({ service, map, calls, advance }) => {
+    service.env.RECOVERY_DAY = '2026-10-13'
+    for (let attempt = 0; attempt < 4; attempt++) { await service.fetch(); advance(60000) }
+    assert.equal(calls(), 4)
+    assert.equal(map.get('budget').daily, 4)
+    assert.equal(map.get('budget').monthly, 4)
+    assert.equal((await (await service.fetch()).json()).error, 'provider_quota_limit')
+    assert.equal(calls(), 4)
+    advance(86400000)
+    for (let attempt = 0; attempt < 3; attempt++) { await service.fetch(); advance(60000) }
+    assert.equal(calls(), 7)
+    assert.equal(map.get('budget').daily, 3)
+    assert.equal(map.get('budget').monthly, 7)
+    assert.equal((await (await service.fetch()).json()).error, 'provider_quota_limit')
+    map.set('budget', { ...map.get('budget'), daily: 0, monthly: 95 })
+    service.env.RECOVERY_DAY = '2026-10-14'
+    assert.equal((await (await service.fetch()).json()).error, 'provider_quota_limit')
+    assert.equal(calls(), 7)
+  })
 })

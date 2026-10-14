@@ -25,6 +25,12 @@ jobs:
         with:
           node-version: '22'
       - run: npm test
+      - name: Comprobar Request y Durable Object en workerd con proveedor simulado
+        run: |
+          npx --yes wrangler@4.149.0 dev --config tests/runtime/wrangler.jsonc --local --port 8798 --show-interactive-dev-session=false > /tmp/workerd.log 2>&1 &
+          runtime_pid=$!
+          trap 'kill "$runtime_pid" || true' EXIT
+          node scripts/verify-runtime.mjs
       - id: source
         run: node -e "const fs=require('fs'); const source=JSON.parse(fs.readFileSync('data/rates-source.json')); fs.appendFileSync(process.env.GITHUB_OUTPUT, 'demand=' + Boolean(source.mode === 'demand' && source.url) + '\n')"
       - id: prepare

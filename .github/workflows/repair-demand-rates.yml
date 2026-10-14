@@ -1,0 +1,64 @@
+name: Reparar y verificar servicio de tasas
+on:
+  workflow_dispatch:
+    inputs:
+      recovery_day:
+        description: 'Día RD autorizado para una única reserva adicional (vacío: límite normal)'
+        required: false
+        default: ''
+permissions:
+  contents: read
+concurrency:
+  group: oro-cash-daily-publish
+  cancel-in-progress: false
+jobs:
+  repair:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+      - name: Regresión en el motor real de Cloudflare con proveedor simulado
+        run: |
+          npx --yes wrangler@4.149.0 dev --config tests/runtime/wrangler.jsonc --local --port 8798 --show-interactive-dev-session=false > /tmp/workerd.log 2>&1 &
+          runtime_pid=$!
+          trap 'kill "$runtime_pid" || true' EXIT
+          node scripts/verify-runtime.mjs
+      - name: Consultar cuota real del proveedor sin exponer la clave
+        env:
+          METALS_DEV_API_KEY: ${{ secrets.METALS_DEV_API_KEY }}
+        run: node scripts/provider-usage.mjs
+      - name: Preparar recuperación acotada y conservar consumo legado
+        env:
+          RECOVERY_DAY: ${{ inputs.recovery_day }}
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs'
+          import { dayKey } from './market.mjs'
+          const day = process.env.RECOVERY_DAY
+          if (day && day !== dayKey(Date.now())) throw new Error('Recovery day must be today in RD')
+          const config = JSON.parse(fs.readFileSync('workers/daily-rates/wrangler.jsonc'))
+          config.vars = { RECOVERY_DAY: day }
+          fs.writeFileSync('workers/daily-rates/wrangler.jsonc', JSON.stringify(config, null, 2))
+          const budget = JSON.parse(fs.readFileSync('data/budget.json'))
+          const rate = JSON.parse(fs.readFileSync('data/rates.json'))
+          fs.writeFileSync('workers/daily-rates/seed.mjs', 'export default ' + JSON.stringify({ ...budget, rate }) + '\n')
+          JS
+      - name: Desplegar corrección conservando secretos y Durable Object
+        id: service
+        run: npx --yes wrangler@4.149.0 deploy --config workers/daily-rates/wrangler.jsonc
+      - name: Verificar snapshot real, concurrencia y cuota estable
+        run: node scripts/verify-demand-rates.mjs
+      - name: Retirar excepción diaria conservando la tasa y los contadores
+        if: always() && steps.service.outcome == 'success' && inputs.recovery_day != ''
+        run: |
+          node -e "const fs=require('fs');const file='workers/daily-rates/wrangler.jsonc';const config=JSON.parse(fs.readFileSync(file));delete config.vars.RECOVERY_DAY;fs.writeFileSync(file,JSON.stringify(config,null,2))"
+          npx --yes wrangler@4.149.0 deploy --config workers/daily-rates/wrangler.jsonc
