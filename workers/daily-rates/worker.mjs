@@ -54,7 +54,10 @@ export class DailyRates {
       if (new URL(request.url).pathname === '/api/status') return json({ day, budget, fetchedAt: rate?.fetchedAt ?? null, current: isCurrent(rate, now), attempts: await this.ctx.storage.get('attemptHistory') || [] })
       if (isCurrent(rate, now)) return json(rate)
       if (!this.env.METALS_DEV_API_KEY) return json({ error: 'service_not_configured', day }, 503)
-      if (budget.daily >= 3 || budget.monthly >= 95) return json({ error: 'provider_quota_limit', day }, 503)
+      // Incident recovery is one extra reservation on a deployment-selected day.
+      // It never resets the ledger and expires automatically at Dominican midnight.
+      const dailyLimit = this.env.RECOVERY_DAY === day ? 4 : 3
+      if (budget.daily >= dailyLimit || budget.monthly >= 95) return json({ error: 'provider_quota_limit', day }, 503)
       if (now < budget.nextAttemptAt) return json({ error: 'provider_retry_pending', day }, 503, Math.ceil((budget.nextAttemptAt - now) / 1000))
       // Count before the outbound request: crashes and failed calls still consume quota.
       budget.daily++
@@ -67,7 +70,9 @@ export class DailyRates {
       try {
         const url = new URL('https://api.metals.dev/v1/latest')
         url.search = new URLSearchParams({ api_key: this.env.METALS_DEV_API_KEY, currency: 'USD', unit: 'toz' })
-        const response = await fetch(url, { signal: AbortSignal.timeout(10000), redirect: 'error' })
+        // workerd supports follow/manual only. Manual + !ok rejects every 3xx
+        // without forwarding the API key or consuming a second provider request.
+        const response = await fetch(url, { signal: AbortSignal.timeout(10000), redirect: 'manual' })
         record.providerDurationMs = Math.max(0, Date.now() - startedAt)
         record.httpStatus = response.status
         if (!response.ok) {

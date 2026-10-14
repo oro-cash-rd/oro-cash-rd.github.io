@@ -1,0 +1,8 @@
+{
+  "name": "oro-cash-runtime-test",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "vars": { "METALS_DEV_API_KEY": "runtime-fixture-only" },
+  "durable_objects": { "bindings": [{ "name": "DAILY_RATES", "class_name": "DailyRates" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DailyRates"] }]
+}

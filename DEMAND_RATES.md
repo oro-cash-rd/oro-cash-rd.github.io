@@ -37,6 +37,9 @@ No hay promesa de disponibilidad infalible del proveedor ni de entrega de imáge
 
 ## Validación
 
+Incidencia del 14/10/2026 y corrección de la petición en workerd:
+[causa, recuperación acotada y evidencia](RATE_INCIDENT_2026-10-14.md).
+
 `npm test`: cambio de día y mes dominicanos, 100 peticiones simultáneas, persistencia tras reinicio, cuota, cooldown, proveedor antiguo, cliente y ausencia de fallback vencido. `wrangler deploy --dry-run` verifica el bundle; la prueba real necesita las credenciales de despliegue.
 
 `node scripts/verify-demand-rates.mjs` valida la configuración publicada, secreto instalado (`/health`), snapshot, timestamps, tres lecturas sucesivas y veinte concurrentes. Comprueba que todas las respuestas son idénticas y que los contadores no aumentan; también OPTIONS 204, POST 405 y ruta inexistente 404. `/api/status` solo lee snapshot y cuota: nunca consulta al proveedor ni expone credenciales. El límite corresponde a esta integración, no al consumo de otras aplicaciones que pudieran compartir la clave.
