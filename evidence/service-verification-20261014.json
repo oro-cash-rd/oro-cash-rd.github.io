@@ -1,0 +1,290 @@
+{
+  "checkedAt": "2026-10-14T17:25:33.956Z",
+  "source": {
+    "mode": "demand",
+    "url": "https://oro-cash-daily-rates.omartinezg930112.workers.dev/api/rates"
+  },
+  "health": {
+    "service": "oro-cash-daily-rates",
+    "configured": true
+  },
+  "rate": {
+    "day": "2026-10-14",
+    "fetchedAt": 1791998586083,
+    "gold": 4083.47,
+    "fx": 61.269047773431026,
+    "metalTimestamp": "2026-10-14T17:22:09.993Z",
+    "currencyTimestamp": "2026-10-14T17:22:15.535Z"
+  },
+  "units": {
+    "gold": "USD/troy ounce (toz)",
+    "fx": "DOP/USD"
+  },
+  "before": {
+    "day": "2026-10-14",
+    "budget": {
+      "day": "2026-10-14",
+      "month": "2026-10",
+      "daily": 4,
+      "monthly": 17,
+      "nextAttemptAt": 1791998645867
+    },
+    "fetchedAt": 1791998586083,
+    "current": true,
+    "requestPolicy": "manual",
+    "recoveryDay": null,
+    "attempts": [
+      {
+        "event": "daily_rate_attempt",
+        "day": "2026-10-14",
+        "attempt": 1,
+        "monthly": 14,
+        "startedAt": 1791984175761,
+        "finishedAt": 1791984175847,
+        "durationMs": 86,
+        "providerDurationMs": 86,
+        "stage": "fetch",
+        "result": "failure",
+        "reason": "provider_network",
+        "httpStatus": null,
+        "providerCode": null,
+        "metalAgeMs": null,
+        "currencyAgeMs": null
+      },
+      {
+        "event": "daily_rate_attempt",
+        "day": "2026-10-14",
+        "attempt": 2,
+        "monthly": 15,
+        "startedAt": 1791984260588,
+        "finishedAt": 1791984260626,
+        "durationMs": 38,
+        "providerDurationMs": 38,
+        "stage": "fetch",
+        "result": "failure",
+        "reason": "provider_network",
+        "httpStatus": null,
+        "providerCode": null,
+        "metalAgeMs": null,
+        "currencyAgeMs": null
+      },
+      {
+        "event": "daily_rate_attempt",
+        "day": "2026-10-14",
+        "attempt": 3,
+        "monthly": 16,
+        "startedAt": 1791984338372,
+        "finishedAt": 1791984338470,
+        "durationMs": 98,
+        "providerDurationMs": 98,
+        "stage": "fetch",
+        "result": "failure",
+        "reason": "provider_network",
+        "httpStatus": null,
+        "providerCode": null,
+        "metalAgeMs": null,
+        "currencyAgeMs": null
+      },
+      {
+        "event": "daily_rate_attempt",
+        "day": "2026-10-14",
+        "attempt": 4,
+        "monthly": 17,
+        "startedAt": 1791998585867,
+        "finishedAt": 1791998586083,
+        "durationMs": 216,
+        "providerDurationMs": 216,
+        "stage": "persist_rate",
+        "result": "success",
+        "reason": "ok",
+        "httpStatus": 200,
+        "providerCode": null,
+        "metalAgeMs": 56090,
+        "currencyAgeMs": 50548
+      }
+    ]
+  },
+  "afterFirst": {
+    "day": "2026-10-14",
+    "budget": {
+      "day": "2026-10-14",
+      "month": "2026-10",
+      "daily": 4,
+      "monthly": 17,
+      "nextAttemptAt": 1791998645867
+    },
+    "fetchedAt": 1791998586083,
+    "current": true,
+    "requestPolicy": "manual",
+    "recoveryDay": null,
+    "attempts": [
+      {
+        "event": "daily_rate_attempt",
+        "day": "2026-10-14",
+        "attempt": 1,
+        "monthly": 14,
+        "startedAt": 1791984175761,
+        "finishedAt": 1791984175847,
+        "durationMs": 86,
+        "providerDurationMs": 86,
+        "stage": "fetch",
+        "result": "failure",
+        "reason": "provider_network",
+        "httpStatus": null,
+        "providerCode": null,
+        "metalAgeMs": null,
+        "currencyAgeMs": null
+      },
+      {
+        "event": "daily_rate_attempt",
+        "day": "2026-10-14",
+        "attempt": 2,
+        "monthly": 15,
+        "startedAt": 1791984260588,
+        "finishedAt": 1791984260626,
+        "durationMs": 38,
+        "providerDurationMs": 38,
+        "stage": "fetch",
+        "result": "failure",
+        "reason": "provider_network",
+        "httpStatus": null,
+        "providerCode": null,
+        "metalAgeMs": null,
+        "currencyAgeMs": null
+      },
+      {
+        "event": "daily_rate_attempt",
+        "day": "2026-10-14",
+        "attempt": 3,
+        "monthly": 16,
+        "startedAt": 1791984338372,
+        "finishedAt": 1791984338470,
+        "durationMs": 98,
+        "providerDurationMs": 98,
+        "stage": "fetch",
+        "result": "failure",
+        "reason": "provider_network",
+        "httpStatus": null,
+        "providerCode": null,
+        "metalAgeMs": null,
+        "currencyAgeMs": null
+      },
+      {
+        "event": "daily_rate_attempt",
+        "day": "2026-10-14",
+        "attempt": 4,
+        "monthly": 17,
+        "startedAt": 1791998585867,
+        "finishedAt": 1791998586083,
+        "durationMs": 216,
+        "providerDurationMs": 216,
+        "stage": "persist_rate",
+        "result": "success",
+        "reason": "ok",
+        "httpStatus": 200,
+        "providerCode": null,
+        "metalAgeMs": 56090,
+        "currencyAgeMs": 50548
+      }
+    ]
+  },
+  "after": {
+    "day": "2026-10-14",
+    "budget": {
+      "day": "2026-10-14",
+      "month": "2026-10",
+      "daily": 4,
+      "monthly": 17,
+      "nextAttemptAt": 1791998645867
+    },
+    "fetchedAt": 1791998586083,
+    "current": true,
+    "requestPolicy": "manual",
+    "recoveryDay": null,
+    "attempts": [
+      {
+        "event": "daily_rate_attempt",
+        "day": "2026-10-14",
+        "attempt": 1,
+        "monthly": 14,
+        "startedAt": 1791984175761,
+        "finishedAt": 1791984175847,
+        "durationMs": 86,
+        "providerDurationMs": 86,
+        "stage": "fetch",
+        "result": "failure",
+        "reason": "provider_network",
+        "httpStatus": null,
+        "providerCode": null,
+        "metalAgeMs": null,
+        "currencyAgeMs": null
+      },
+      {
+        "event": "daily_rate_attempt",
+        "day": "2026-10-14",
+        "attempt": 2,
+        "monthly": 15,
+        "startedAt": 1791984260588,
+        "finishedAt": 1791984260626,
+        "durationMs": 38,
+        "providerDurationMs": 38,
+        "stage": "fetch",
+        "result": "failure",
+        "reason": "provider_network",
+        "httpStatus": null,
+        "providerCode": null,
+        "metalAgeMs": null,
+        "currencyAgeMs": null
+      },
+      {
+        "event": "daily_rate_attempt",
+        "day": "2026-10-14",
+        "attempt": 3,
+        "monthly": 16,
+        "startedAt": 1791984338372,
+        "finishedAt": 1791984338470,
+        "durationMs": 98,
+        "providerDurationMs": 98,
+        "stage": "fetch",
+        "result": "failure",
+        "reason": "provider_network",
+        "httpStatus": null,
+        "providerCode": null,
+        "metalAgeMs": null,
+        "currencyAgeMs": null
+      },
+      {
+        "event": "daily_rate_attempt",
+        "day": "2026-10-14",
+        "attempt": 4,
+        "monthly": 17,
+        "startedAt": 1791998585867,
+        "finishedAt": 1791998586083,
+        "durationMs": 216,
+        "providerDurationMs": 216,
+        "stage": "persist_rate",
+        "result": "success",
+        "reason": "ok",
+        "httpStatus": 200,
+        "providerCode": null,
+        "metalAgeMs": 56090,
+        "currencyAgeMs": 50548
+      }
+    ]
+  },
+  "checks": {
+    "sequential": 3,
+    "concurrent": 20,
+    "identicalSnapshot": true,
+    "noExtraProviderReservations": true,
+    "post": 405,
+    "options": 204,
+    "missing": 404
+  },
+  "mercaOroDopPerGram": {
+    "10K": "3351.59",
+    "14K": "4692.22",
+    "18K": "6032.85",
+    "24K": "8043.81"
+  }
+}

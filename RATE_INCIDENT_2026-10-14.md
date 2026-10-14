@@ -51,5 +51,15 @@ Este comportamiento también está reportado en
 Los dos primeros workflows no completaron su verificación por esta demora;
 no se interpreta su fallo como falta de cuota ni se repite la consulta de tasa.
 
-La verificación final de concurrencia y retirada efectiva de la excepción se
-documentará tras confirmar la versión que atiende el objeto.
+Verificación HTTPS real a las 17:25:33.956Z: política `manual` efectiva,
+`recoveryDay=null`, snapshot vigente idéntico en tres lecturas sucesivas y
+20 concurrentes; daily=4/monthly=17 sin incremento. OPTIONS 204, POST 405 y
+ruta desconocida 404. Evidencia completa:
+[JSON real](evidence/service-verification-20261014.json) y
+[cotizador en Chrome](evidence/quote-recovered-20261014.png).
+
+Precios Merca Oro sin descuento, RD$/g: 10K 3351.59, 14K 4692.22,
+18K 6032.85 y 24K 8043.81. Oro Cash aplica sus purezas y oferta al 75%;
+su estimación para 1 g / 24K es RD$6,027. Son convenciones diferentes.
+La tarea de imagen existente puede consumir nuevamente el mismo endpoint;
+no se modificó el horario ni se afirma entrega de una nueva imagen aquí.
