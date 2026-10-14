@@ -18,10 +18,12 @@ assert.equal(health.configured, true)
 // Deployments propagate asynchronously. Read status until the correct Durable
 // Object code AND recovery binding are active, without spending provider quota.
 let before
-for (let attempt = 0; attempt < 30; attempt++) {
+// Active objects can retain the previous code for up to five minutes, including
+// deployments requested as immediate (workers-sdk issue #16235).
+for (let attempt = 0; attempt < 240; attempt++) {
   before = await read(new URL('/api/status?verify=' + Date.now(), endpoint))
   if (before.requestPolicy === 'manual' && (!Object.hasOwn(process.env, 'EXPECTED_RECOVERY_DAY') || before.recoveryDay === (process.env.EXPECTED_RECOVERY_DAY || null))) break
-  if (attempt === 29) throw new Error('Deployment did not propagate the expected request policy/binding')
+  if (attempt === 239) throw new Error('Deployment did not propagate the expected request policy/binding')
   await new Promise(resolve => setTimeout(resolve, 1500))
 }
 const rate = await read(endpoint)

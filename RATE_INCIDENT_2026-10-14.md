@@ -36,5 +36,20 @@ La regresión adicional se ejecuta en workerd con Request y Durable Object reale
 y únicamente la respuesta del proveedor simulada; pasa localmente y se integra
 en el workflow de publicación habitual para detectar esta incompatibilidad.
 
-La recuperación productiva y la cuota real se documentarán después de ejecutar
-el workflow; estas comprobaciones locales no acreditan producción.
+La consulta real `/usage` confirmó HTTP 200, clave activa y 89/100 solicitudes
+restantes antes de recuperar. La única reserva adicional obtuvo oro 4083.47
+USD/onza troy y cambio 61.269047773431026 DOP/USD; fetchedAt
+2026-10-14T17:23:06.083Z, timestamps de metal 17:22:09.993Z y moneda
+17:22:15.535Z. Se conservaron daily=4/monthly=17 e historial previo.
+Oro Cash calculó en Chrome 1 g / 24K = RD$6,027 con fecha 14/10/2026.
+
+Cloudflare mantuvo inicialmente el código anterior en el Durable Object activo,
+incluso tras completar el despliegue. El verificador consulta solo status hasta
+confirmar la política y binding efectivos, con margen de seis minutos.
+Este comportamiento también está reportado en
+[workers-sdk #16235](https://github.com/cloudflare/workers-sdk/issues/16235).
+Los dos primeros workflows no completaron su verificación por esta demora;
+no se interpreta su fallo como falta de cuota ni se repite la consulta de tasa.
+
+La verificación final de concurrencia y retirada efectiva de la excepción se
+documentará tras confirmar la versión que atiende el objeto.
