@@ -56,6 +56,8 @@ jobs:
         id: service
         run: npx --yes wrangler@4.149.0 deploy --config workers/daily-rates/wrangler.jsonc
       - name: Verificar snapshot real, concurrencia y cuota estable
+        env:
+          EXPECTED_RECOVERY_DAY: ${{ inputs.recovery_day }}
         run: node scripts/verify-demand-rates.mjs
       - name: Retirar excepción diaria conservando la tasa y los contadores
         if: always() && steps.service.outcome == 'success' && inputs.recovery_day != ''

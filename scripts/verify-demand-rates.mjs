@@ -15,7 +15,15 @@ assert.equal(endpoint.pathname, '/api/rates')
 assert.equal(endpoint.username + endpoint.password + endpoint.search + endpoint.hash, '')
 const health = await read(new URL('/health', endpoint))
 assert.equal(health.configured, true)
-const before = await read(new URL('/api/status', endpoint))
+// Deployments propagate asynchronously. Read status until the correct Durable
+// Object code AND recovery binding are active, without spending provider quota.
+let before
+for (let attempt = 0; attempt < 30; attempt++) {
+  before = await read(new URL('/api/status?verify=' + Date.now(), endpoint))
+  if (before.requestPolicy === 'manual' && (!Object.hasOwn(process.env, 'EXPECTED_RECOVERY_DAY') || before.recoveryDay === (process.env.EXPECTED_RECOVERY_DAY || null))) break
+  if (attempt === 29) throw new Error('Deployment did not propagate the expected request policy/binding')
+  await new Promise(resolve => setTimeout(resolve, 1500))
+}
 const rate = await read(endpoint)
 assert.ok(isCurrent(rate))
 for (const stamp of [rate.metalTimestamp, rate.currencyTimestamp]) {

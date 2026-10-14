@@ -51,7 +51,7 @@ export class DailyRates {
         await this.ctx.storage.put('rate', rate)
       }
       // Read-only diagnostics never initiate a provider request.
-      if (new URL(request.url).pathname === '/api/status') return json({ day, budget, fetchedAt: rate?.fetchedAt ?? null, current: isCurrent(rate, now), attempts: await this.ctx.storage.get('attemptHistory') || [] })
+      if (new URL(request.url).pathname === '/api/status') return json({ day, budget, fetchedAt: rate?.fetchedAt ?? null, current: isCurrent(rate, now), requestPolicy: 'manual', recoveryDay: this.env.RECOVERY_DAY || null, attempts: await this.ctx.storage.get('attemptHistory') || [] })
       if (isCurrent(rate, now)) return json(rate)
       if (!this.env.METALS_DEV_API_KEY) return json({ error: 'service_not_configured', day }, 503)
       // Incident recovery is one extra reservation on a deployment-selected day.
